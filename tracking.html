@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Track your Jewellery and Accessories order status" />
+  <title>Track My Order | Jewellery & Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="tracking.css" />
+</head>
+<body>
+  <div class="announcement"><span>Complimentary shipping on orders over $75</span><span class="announcement-note">Designed to be treasured</span></div>
+
+  <header class="site-header" id="home">
+    <div class="header-main">
+      <button class="icon-btn menu-toggle" aria-label="Open menu">☰</button>
+      <a href="index.html" class="logo">J<span>&</span>A</a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="index.html#shop">Shop</a>
+        <a href="checkout.html">Checkout</a>
+        <a href="tracking.html">Track Order</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn search-toggle" aria-label="Search">⌕</button>
+        <button class="icon-btn" aria-label="Account">♙</button>
+        <a href="checkout.html" class="icon-btn bag-btn" aria-label="Cart"><span class="cart-count">0</span></a>
+      </div>
+    </div>
+    <div class="mobile-nav">
+      <a href="index.html">Home</a>
+      <a href="index.html#shop">Shop</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="tracking.html">Track Order</a>
+    </div>
+  </header>
+
+  <main class="tracking-container">
+    <section class="tracking-search">
+      <div class="tracking-card">
+        <h1>Track My Order</h1>
+        <p>Enter your order ID and mobile number to view your latest delivery status.</p>
+
+        <form id="trackingForm" class="tracking-form">
+          <div class="form-group">
+            <label for="orderIdInput">Order ID</label>
+            <input type="text" id="orderIdInput" name="orderId" placeholder="ORD-XXXXXXX" required />
+          </div>
+
+          <div class="form-group">
+            <label for="mobileInput">Mobile Number</label>
+            <input type="tel" id="mobileInput" name="mobile" placeholder="03001234567" required />
+          </div>
+
+          <button type="submit" class="btn-track-submit">Track Order</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="tracking-result" id="trackingResult" style="display: none;">
+      <div class="tracking-summary">
+        <h2>Order Details</h2>
+        <div class="summary-grid">
+          <div><strong>Order ID:</strong> <span id="resultOrderId"></span></div>
+          <div><strong>Customer:</strong> <span id="resultCustomerName"></span></div>
+          <div><strong>Mobile:</strong> <span id="resultMobile"></span></div>
+          <div><strong>City:</strong> <span id="resultCity"></span></div>
+          <div><strong>Total:</strong> <span id="resultTotal"></span></div>
+          <div><strong>Payment:</strong> <span>Cash on Delivery</span></div>
+        </div>
+      </div>
+
+      <div class="tracking-timeline" id="trackingTimeline"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand">
+      <a class="logo" href="index.html">J<span>&</span>A</a>
+      <p>Elevated everyday jewellery<br>for every version of you.</p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <a href="index.html#shop">Shop All</a>
+      <a href="index.html#categories">Categories</a>
+      <a href="index.html#about">About Us</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="tracking.js"></script>
+</body>
+</html>
