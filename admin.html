@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Admin order management for Jewellery and Accessories" />
+  <title>Admin Orders | Jewellery & Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
+      color: #1a1a1a;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .admin-page {
+      max-width: 1200px;
+      margin: 2rem auto 4rem;
+      padding: 0 1rem;
+    }
+
+    .admin-panel {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      padding: 2rem;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .admin-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin: 0;
+    }
+
+    .admin-toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-search {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .admin-search input {
+      width: 100%;
+      border: 1px solid #e7dfd4;
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      font-size: 0.95rem;
+    }
+
+    .btn-admin-refresh,
+    .btn-admin-status {
+      border: none;
+      border-radius: 10px;
+      padding: 0.8rem 1.2rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(135deg, #b18b58 0%, #9a7548 100%);
+      color: white;
+    }
+
+    .admin-order-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .admin-order-card {
+      background: #faf8f3;
+      border: 1px solid #efe7dc;
+      border-radius: 14px;
+      padding: 1.25rem;
+    }
+
+    .admin-order-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .admin-order-header h3 {
+      margin: 0 0 0.3rem;
+      font-size: 1.2rem;
+    }
+
+    .admin-order-header p {
+      margin: 0;
+      color: #666;
+    }
+
+    .admin-order-meta {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .admin-order-meta span {
+      background: #f0e5d2;
+      color: #735b29;
+      border-radius: 999px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .admin-order-body {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1rem;
+      align-items: end;
+    }
+
+    .admin-order-details {
+      display: grid;
+      gap: 0.45rem;
+      color: #444;
+    }
+
+    .admin-order-details p {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .admin-order-actions {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .admin-select,
+    .admin-charge-input {
+      width: 100%;
+      border: 1px solid #e7dfd4;
+      border-radius: 10px;
+      padding: 0.8rem 0.9rem;
+      font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .admin-charge-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .admin-msg {
+      padding: 0.9rem 1rem;
+      background: #ecfdf5;
+      color: #166534;
+      border: 1px solid #a7f3d0;
+      border-radius: 10px;
+      display: none;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 760px) {
+      .admin-toolbar,
+      .admin-order-body {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-order-header {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="home">
+    <div class="header-main">
+      <button class="icon-btn menu-toggle" aria-label="Open menu">☰</button>
+      <a href="index.html" class="logo">J<span>&</span>A</a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="index.html#shop">Shop</a>
+        <a href="checkout.html">Checkout</a>
+        <a href="tracking.html">Track Order</a>
+        <a href="admin.html">Admin</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn search-toggle" aria-label="Search">⌕</button>
+        <button class="icon-btn" aria-label="Account">♙</button>
+        <a href="checkout.html" class="icon-btn bag-btn" aria-label="Cart"><span class="cart-count">0</span></a>
+      </div>
+    </div>
+    <div class="mobile-nav">
+      <a href="index.html">Home</a>
+      <a href="index.html#shop">Shop</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="tracking.html">Track Order</a>
+      <a href="admin.html">Admin</a>
+    </div>
+  </header>
+
+  <main class="admin-page">
+    <section class="admin-panel">
+      <div class="admin-header">
+        <h1>Admin Order Management</h1>
+        <button type="button" class="btn-admin-refresh" id="refreshOrdersBtn">Refresh Orders</button>
+      </div>
+
+      <div class="admin-toolbar">
+        <div class="admin-search">
+          <input id="adminSearchInput" type="search" placeholder="Search by Order ID or customer mobile number" />
+        </div>
+      </div>
+
+      <div id="adminOrderList" class="admin-order-list"></div>
+      <div id="adminMsg" class="admin-msg"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand">
+      <a class="logo" href="index.html">J<span>&</span>A</a>
+      <p>Elevated everyday jewellery<br>for every version of you.</p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <a href="index.html#shop">Shop All</a>
+      <a href="index.html#categories">Categories</a>
+      <a href="index.html#about">About Us</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
