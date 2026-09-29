@@ -1,5 +1,4 @@
-// ========== CHECKOUT JAVASCRIPT ==========
-
+// ========== ORDER MANAGER CLASS ==========
 class OrderManager {
   constructor() {
     this.orders = this.loadOrders();
@@ -29,7 +28,7 @@ class OrderManager {
   createOrder(formData) {
     const orderId = this.generateOrderId();
     const now = new Date();
-    
+
     const order = {
       id: orderId,
       customerName: formData.fullName,
@@ -50,11 +49,11 @@ class OrderManager {
       statusHistory: [
         {
           status: 'Order Placed',
-          date: now,
+          date: now.toISOString(),
           timestamp: now.getTime()
         }
       ],
-      createdAt: now,
+      createdAt: now.toISOString(),
       createdAtTimestamp: now.getTime()
     };
 
@@ -65,53 +64,18 @@ class OrderManager {
 
   calculateSubtotal() {
     return this.cart.reduce((sum, item) => {
-      return sum + (parseFloat(item.price.replace(/[^0-9.-]+/g, '')) * item.quantity);
+      const price = parseFloat(String(item.price).replace(/[^0-9.-]+/g, '')) || 0;
+      return sum + (price * item.quantity);
     }, 0);
   }
 
   calculateDeliveryCharges() {
     const subtotal = this.calculateSubtotal();
-    return subtotal > 75 ? 0 : 299; // Free delivery over Rs. 75, otherwise Rs. 299
+    return subtotal > 75 ? 0 : 299;
   }
 
   calculateTotal() {
     return this.calculateSubtotal() + this.calculateDeliveryCharges();
-  }
-
-  getOrderById(orderId) {
-    return this.orders.find(order => order.id === orderId);
-  }
-
-  getOrderByMobile(mobileNumber) {
-    return this.orders.filter(order => order.mobileNumber === mobileNumber);
-  }
-
-  updateOrderStatus(orderId, newStatus) {
-    const order = this.getOrderById(orderId);
-    if (order) {
-      order.status = newStatus;
-      const now = new Date();
-      order.statusHistory.push({
-        status: newStatus,
-        date: now,
-        timestamp: now.getTime()
-      });
-      this.saveOrders();
-      return true;
-    }
-    return false;
-  }
-
-  updateDeliveryCharges(orderId, newCharges) {
-    const order = this.getOrderById(orderId);
-    if (order) {
-      const oldCharges = order.deliveryCharges;
-      order.deliveryCharges = newCharges;
-      order.total = order.subtotal + newCharges;
-      this.saveOrders();
-      return { oldCharges, newCharges };
-    }
-    return null;
   }
 
   clearCart() {
@@ -122,8 +86,7 @@ class OrderManager {
 
 const orderManager = new OrderManager();
 
-// ========== CHECKOUT PAGE INITIALIZATION ==========
-
+// ========== PAGE INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('checkoutForm')) {
     initializeCheckout();
@@ -132,10 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initializeCheckout() {
   const checkoutForm = document.getElementById('checkoutForm');
-  const orderItems = document.getElementById('orderItems');
   const cartItems = orderManager.cart;
 
-  // Check if cart is empty
   if (cartItems.length === 0) {
     document.querySelector('.checkout-view').innerHTML = `
       <div style="text-align: center; padding: 4rem 2rem; grid-column: 1 / -1;">
@@ -147,21 +108,13 @@ function initializeCheckout() {
     return;
   }
 
-  // Render cart items
   renderCartItems(cartItems);
-
-  // Update totals
   updateCheckoutTotals();
 
-  // Handle form submission
   checkoutForm.addEventListener('submit', (e) => {
     e.preventDefault();
     placeOrder();
   });
-
-  // Update totals when delivery location changes
-  document.getElementById('city').addEventListener('change', updateCheckoutTotals);
-  document.getElementById('province').addEventListener('change', updateCheckoutTotals);
 }
 
 function renderCartItems(cartItems) {
@@ -209,30 +162,21 @@ function placeOrder() {
     orderNotes: formData.get('orderNotes')
   };
 
-  // Create order
   const order = orderManager.createOrder(orderData);
-
-  // Clear cart
   orderManager.clearCart();
-
-  // Show confirmation
   showOrderConfirmation(order);
 }
 
 function showOrderConfirmation(order) {
-  // Hide checkout form
   document.getElementById('checkoutView').style.display = 'none';
-
-  // Show confirmation
   document.getElementById('confirmationView').style.display = 'block';
 
-  // Populate confirmation details
   document.getElementById('confirmationOrderId').textContent = order.id;
   document.getElementById('confirmCustomerName').textContent = order.customerName;
   document.getElementById('confirmCustomerMobile').textContent = order.mobileNumber;
-  document.getElementById('confirmDeliveryAddress').textContent = `${order.deliveryAddress}, ${order.area}, ${order.city}, ${order.province}`;
+  document.getElementById('confirmDeliveryAddress').textContent =
+    `${order.deliveryAddress}, ${order.area}, ${order.city}, ${order.province}`;
 
-  // Populate order items
   const confirmationOrderItems = document.getElementById('confirmationOrderItems');
   confirmationOrderItems.innerHTML = `
     <h4 style="font-weight: 600; margin-bottom: 1rem;">Order Items</h4>
@@ -253,21 +197,16 @@ function showOrderConfirmation(order) {
     `).join('')}
   `;
 
-  // Update totals
   document.getElementById('confirmSubtotal').textContent = `Rs. ${order.subtotal.toFixed(0)}`;
   document.getElementById('confirmDeliveryCharges').textContent = `Rs. ${order.deliveryCharges.toFixed(0)}`;
   document.getElementById('confirmTotal').textContent = `Rs. ${order.total.toFixed(0)}`;
 
-  // Setup WhatsApp button
   setupWhatsAppButton(order);
-
-  // Scroll to top
   window.scrollTo(0, 0);
 }
 
 function setupWhatsAppButton(order) {
   const whatsappBtn = document.getElementById('confirmOrderWhatsApp');
-  
   whatsappBtn.addEventListener('click', () => {
     sendWhatsAppMessage(order);
   });
@@ -276,28 +215,28 @@ function setupWhatsAppButton(order) {
 function sendWhatsAppMessage(order) {
   const phoneNumber = order.whatsappNumber || order.mobileNumber;
   const cleanPhone = phoneNumber.replace(/\D/g, '');
-  
+
   let message = `Order Confirmation\n\n`;
   message += `Order ID: ${order.id}\n`;
   message += `Customer Name: ${order.customerName}\n`;
   message += `Mobile: ${order.mobileNumber}\n`;
   message += `Delivery Address: ${order.deliveryAddress}, ${order.area}, ${order.city}, ${order.province}\n\n`;
-  
+
   message += `Products:\n`;
   order.items.forEach(item => {
     message += `${item.name} × ${item.quantity}\n`;
   });
-  
+
   message += `\nSubtotal: Rs. ${order.subtotal.toFixed(0)}\n`;
   message += `Delivery Charges: Rs. ${order.deliveryCharges.toFixed(0)}\n`;
   message += `Total: Rs. ${order.total.toFixed(0)}\n\n`;
-  
+
   message += `Payment Method: Cash on Delivery\n\n`;
   message += `Please confirm my order.`;
 
   const encodedMessage = encodeURIComponent(message);
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
-  
+
   window.open(whatsappUrl, '_blank');
 }
 
@@ -305,5 +244,7 @@ function copyOrderId() {
   const orderId = document.getElementById('confirmationOrderId').textContent;
   navigator.clipboard.writeText(orderId).then(() => {
     alert('Order ID copied to clipboard: ' + orderId);
+  }).catch(() => {
+    alert('Failed to copy Order ID');
   });
 }
