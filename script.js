@@ -136,68 +136,77 @@ function attachCardEvents() {
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', () => {
   updateCartCount();
-  render();
 
-  // Filter tabs
-  document.querySelectorAll('.filter-tabs button').forEach(b => {
-    b.onclick = () => {
-      document.querySelectorAll('.filter-tabs button').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      render(b.dataset.filter);
+  const menuToggle = document.querySelector('.menu-toggle');
+  const mobileNav = document.querySelector('.mobile-nav');
+  if (menuToggle && mobileNav) {
+    menuToggle.onclick = () => {
+      mobileNav.classList.toggle('open');
     };
-  });
+  }
 
-  // Category cards
-  document.querySelectorAll('.category-card').forEach(card => {
-    card.onclick = () => {
-      const filter = card.dataset.filter;
-      document.querySelectorAll('.filter-tabs button').forEach(x => x.classList.remove('active'));
-      document.querySelector(`.filter-tabs [data-filter="${filter}"]`)?.classList.add('active');
-      render(filter);
-      document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
+  const searchToggle = document.querySelector('.search-toggle');
+  const searchPanel = document.querySelector('.search-panel');
+  const searchInput = document.getElementById('searchInput');
+  if (searchToggle && searchPanel) {
+    searchToggle.onclick = () => {
+      searchPanel.classList.toggle('open');
+      searchInput?.focus();
     };
-  });
+  }
 
-  // Menu toggle
-  document.querySelector('.menu-toggle').onclick = () => {
-    document.querySelector('.mobile-nav').classList.toggle('open');
-  };
+  if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const query = e.target.value.toLowerCase();
+        const filtered = products.filter(p =>
+          p.name.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query) ||
+          p.desc.toLowerCase().includes(query)
+        );
 
-  // Search
-  document.querySelector('.search-toggle').onclick = () => {
-    const p = document.querySelector('.search-panel');
-    p.classList.toggle('open');
-    document.getElementById('searchInput')?.focus();
-  };
-
-  document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      const query = e.target.value.toLowerCase();
-      const filtered = products.filter(p =>
-        p.name.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query) ||
-        p.desc.toLowerCase().includes(query)
-      );
-
-      if (grid && filtered.length) {
-        grid.innerHTML = filtered
-          .map(p => `
-            <article class="product-card">
-              <div class="product-image">
-                <img loading="lazy" src="${p.image}" alt="${p.name}" />
-              </div>
-              <h3>${p.name}</h3>
-              <p>${p.desc}</p>
-              <div class="product-footer">
-                <span class="price">${p.price}</span>
-                <button class="btn-add-to-cart" onclick="addToCart(${JSON.stringify(p).replace(/"/g, '&quot;')})">Add to Cart</button>
-                <button class="wishlist" aria-label="Add to wishlist">♡</button>
-              </div>
-            </article>
-          `)
-          .join('');
-        attachCardEvents();
+        if (grid && filtered.length) {
+          grid.innerHTML = filtered
+            .map(p => `
+              <article class="product-card">
+                <div class="product-image">
+                  <img loading="lazy" src="${p.image}" alt="${p.name}" />
+                </div>
+                <h3>${p.name}</h3>
+                <p>${p.desc}</p>
+                <div class="product-footer">
+                  <span class="price">${p.price}</span>
+                  <button class="btn-add-to-cart" onclick="addToCart(${JSON.stringify(p).replace(/"/g, '&quot;')})">Add to Cart</button>
+                  <button class="wishlist" aria-label="Add to wishlist">♡</button>
+                </div>
+              </article>
+            `)
+            .join('');
+          attachCardEvents();
+        }
       }
-    }
-  });
+    });
+  }
+
+  if (grid) {
+    render();
+
+    document.querySelectorAll('.filter-tabs button').forEach(b => {
+      b.onclick = () => {
+        document.querySelectorAll('.filter-tabs button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        render(b.dataset.filter);
+      };
+    });
+
+    document.querySelectorAll('.category-card').forEach(card => {
+      card.onclick = () => {
+        const filter = card.dataset.filter;
+        document.querySelectorAll('.filter-tabs button').forEach(x => x.classList.remove('active'));
+        document.querySelector(`.filter-tabs [data-filter="${filter}"]`)?.classList.add('active');
+        render(filter);
+        document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
+      };
+    });
+  }
 });
